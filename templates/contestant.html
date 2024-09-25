@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contestant</title>
+</head>
+<body>
+    <h1>Contestant Panel</h1>
+    <div id="login">
+        <input type="text" id="username" placeholder="Enter your name">
+        <button onclick="joinGame()">Join Game</button>
+    </div>
+
+    <div id="game" style="display:none;">
+        <h2 id="status">Waiting for button to be activated...</h2>
+        <button id="gameButton" onclick="clickButton()" disabled>Click the Button!</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
