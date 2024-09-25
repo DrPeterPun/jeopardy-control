@@ -52,10 +52,32 @@ socket.on('update_click_order', function(data) {
     });
 });
 
+socket.on('update_locked_out', function(data) {
+    var lockedOut = document.getElementById('lockedOut');
+    lockedOut.innerHTML = '';
+    data.click_order.forEach(function(user) {
+        var li = document.createElement('li');
+        li.appendChild(document.createTextNode(user));
+        lockedOut.appendChild(li);
+    });
+});
+
+function startButton() {
+    socket.emit('start_button');
+}
+
 function activateButton() {
     socket.emit('activate_button');
 }
 
-function deactivateButton() {
-    socket.emit('deactivate_button');
+function resetButton() {
+    socket.emit('reset_button');
 }
+
+document.addEventListener('keydown', function(event) {
+    // Check if the pressed key is the spacebar (key code 32)
+    if (event.code === 'Space') {
+        event.preventDefault(); // Prevent the default action (e.g., scrolling)
+        clickButton(); // Call the function
+    }
+});

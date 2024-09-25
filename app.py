@@ -6,8 +6,14 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 contestants = []
+locked_out = []
 click_order = []
 button_active = False
+button_started = False
+
+# ----------------
+# Routes
+# ----------------
 
 
 @app.route('/')
@@ -24,6 +30,10 @@ def admin():
 def contestant():
     return render_template('contestant.html')
 
+# ----------------
+# Socket behaviour
+# ----------------
+
 
 @socketio.on('join_contestant')
 def handle_join(data):
@@ -39,14 +49,20 @@ def handle_join(data):
 
 @socketio.on('button_click')
 def handle_click(data):
-    global button_active, click_order
+    global button_active, click_order, locked_out
     username = data['username']
 
     if not button_active:
         emit('click_fail', {'message': 'Button not active'}, room=request.sid)
         return
 
-    if username in click_order:
+    if button_active and not button_started:
+        emit('click_fail', {'message': 'Button not started, you are locked out for this round'}
+             , room=request.sid)
+        locked_out.append(username)
+        return
+
+    if username in click_order + locked_out:
         emit('click_fail', {'message': 'Already clicked'}, room=request.sid)
     else:
         click_order.append(username)
@@ -55,19 +71,33 @@ def handle_click(data):
         else:
             emit('click_ack', {'message': 'You clicked the button'}, room=request.sid)
 
+        emit('update_locked_out', {'locked_out': locked_out}, broadcast=True)
         emit('update_click_order', {'click_order': click_order}, broadcast=True)
 
 
+# activates button, it is clickable but locks out participants
 @socketio.on('activate_button')
 def activate_button():
-    global button_active, click_order
+    global button_active, click_order, locked_out
     button_active = True
+    locked_out = []
     click_order = []
     emit('button_status', {'active': button_active}, broadcast=True)
 
 
-@socketio.on('deactivate_button')
-def deactivate_button():
+# starts button, From this point forwerdas, clicks count
+@socketio.on('start_button')
+def start_button():
+    global button_started, click_order
+    if button_active:
+        button_started = True
+    click_order = []
+    emit('button_status', {'active': button_active}, broadcast=True)
+
+
+# deletes all button related state, restarts a round
+@socketio.on('reset_button')
+def reset_button():
     global button_active
     button_active = False
     emit('button_status', {'active': button_active}, broadcast=True)
