@@ -39,9 +39,10 @@ def contestant():
 def handle_join(data):
     global contestants
     username = data['username']
-    if username not in contestants:
+    team = data['team']
+    if username not in [a for (a, b) in contestants]:
         print(username, " just joined the room")
-        contestants.append(username)
+        contestants.append((username, team))
         emit('join_success', {'username': username})
     else:
         emit('join_failure', {'message': 'Username already taken'})

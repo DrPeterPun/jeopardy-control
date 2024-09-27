@@ -1,10 +1,12 @@
 var socket = io();
 var username = '';
+var team = '';
 
 function joinGame() {
     username = document.getElementById('username').value;
+    team = document.getElementById('team').value;
     if (username) {
-        socket.emit('join_contestant', { username: username });
+        socket.emit('join_contestant', { username: username , team: team});
     }
 }
 
