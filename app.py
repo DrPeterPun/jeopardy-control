@@ -57,15 +57,13 @@ def handle_click(data):
 
     if not button_active:
         emit('click_fail', {'message': 'Button not active'}, room=request.sid)
-        return
 
-    if button_active and not button_started:
+    elif button_active and not button_started:
         emit('click_fail', {'message': 'Button not started, you are locked out for this round'}
              , room=request.sid)
         locked_out.append(username)
-        return
 
-    if username in click_order + locked_out:
+    elif username in click_order + locked_out:
         emit('click_fail', {'message': 'Already clicked'}, room=request.sid)
     else:
         click_order.append(username)
@@ -79,10 +77,20 @@ def handle_click(data):
     }, broadcast=True)
     print([{'name': a, 'team': b} for (a, b) in contestants if a in locked_out])
 
-    print([{'name': a, 'team': b} for (a, b) in contestants if a in click_order])
-    emit('update_click_oder', {
-        'click_order': [{'name': a, 'team': b} for (a, b) in contestants if a in click_order]
+    # print([{'name': a, 'team': b} for (a, b) in contestants if a in click_order])
+    # emit('update_click_oder', {
+    #    'click_order': [{'name': a, 'team': b} for (a, b) in contestants if a in click_order]
+    # }, broadcast=True)
+
+    # emit('update_locked_out', {
+    #    'locked_out': [a + " " + b for (a, b) in contestants if a in locked_out]
+    # }, broadcast=True)
+    # print([a + " " + b for (a, b) in contestants if a in locked_out])
+
+    emit('update_click_order', {
+        'click_order': [a + " " + b for (a, b) in contestants if a in click_order]
     }, broadcast=True)
+    print([a + " " + b for (a, b) in contestants if a in click_order])
 
 
 # activates button, it is clickable but locks out participants
@@ -112,12 +120,24 @@ def start_button():
 # deletes all button related state, restarts a round
 @socketio.on('deactivate_button')
 def reset_button():
-    global button_active, button_started
+    global button_active, button_started, locked_out, click_order
     print("deactivate button")
     button_active = False
     button_started = False
+    locked_out = []
+    click_order = []
     # emit('deactivate_button', {'active': button_active}, broadcast=True)
     updateButtonState()
+    emit('update_locked_out', {
+        'locked_out': [{'name': a, 'team': b} for (a, b) in contestants if a in locked_out]
+    }, broadcast=True)
+    print([{'name': a, 'team': b} for (a, b) in contestants if a in locked_out])
+
+    emit('update_click_order', {
+        'click_order': [a + " " + b for (a, b) in contestants if a in click_order]
+    }, broadcast=True)
+    print([a + " " + b for (a, b) in contestants if a in click_order])
+
 
 
 def updateButtonState():

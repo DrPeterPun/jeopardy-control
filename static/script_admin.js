@@ -67,14 +67,15 @@ socket.on('update_click_order', function(data) {
 
     console.log("idk");
     data.click_order.forEach(function(user) {
+        console.log(user);
         var li = document.createElement('li');
 
-        console.log(contestat);
+        console.log(user);
         // Set the text color to the player's team color
-        li.style.color = user.team;
+        // li.style.color = user.team;
 
         // Add the player's name
-        li.appendChild(document.createTextNode(user.name));
+        li.appendChild(document.createTextNode(user));
 
         // Append the list item to the click order list
         clickOrder.appendChild(li);
@@ -89,6 +90,8 @@ socket.on('update_locked_out', function(data) {
     const greenTeamList = document.getElementById('greenTeam');
     const clickOrderList = document.getElementById('clickOrder');
 
+    console.log("locked out")
+    console.log(data)
     // Clear the current lists
     blueTeamList.innerHTML = 'Blue Team:';
     redTeamList.innerHTML = 'Red Team:';
@@ -97,7 +100,7 @@ socket.on('update_locked_out', function(data) {
 
     // Iterate over the locked out contestants
     data.locked_out.forEach(function(contestant) {
-        console.log(contestat)
+        console.log(contestant)
         const listItem = document.createElement('li');
         listItem.textContent = contestant.name;
 
@@ -111,51 +114,10 @@ socket.on('update_locked_out', function(data) {
         }
 
         // Add the contestant to the click order list
-        const clickOrderItem = document.createElement('li');
-        clickOrderItem.textContent = `${index + 1}. ${contestant.name} (${contestant.team} Team)`;
-
-        // Set the text color based on the team
-        if (contestant.team === 'blue') {
-            clickOrderItem.style.color = 'blue';
-        } else if (contestant.team === 'red') {
-            clickOrderItem.style.color = 'red';
-        } else if (contestant.team === 'green') {
-            clickOrderItem.style.color = 'green';
-        }
-
-        clickOrderList.appendChild(clickOrderItem);
-
+        // const clickOrderItem = document.createElement('li');
+        // clickOrderItem.textContent = `${contestant.name} (${contestant.team} Team)`;
     });
 });
-
-
-socket.on('update_click_order', function(data) {
-    // Get references to the team lists
-    const blueTeamList = document.getElementById('blueTeam');
-    const redTeamList = document.getElementById('redTeam');
-    const greenTeamList = document.getElementById('greenTeam');
-
-    // Clear the current lists
-    blueTeamList.innerHTML = 'Blue Team:';
-    redTeamList.innerHTML = 'Red Team:';
-    greenTeamList.innerHTML = 'Green Team:';
-
-    // Iterate over the locked out contestants
-    data.locked_out.forEach(function(contestant) {
-        const listItem = document.createElement('li');
-        listItem.textContent = contestant.name;
-
-        // Add the contestant to the corresponding team list
-        if (contestant.team === 'blue') {
-            blueTeamList.appendChild(listItem);
-        } else if (contestant.team === 'red') {
-            redTeamList.appendChild(listItem);
-        } else if (contestant.team === 'green') {
-            greenTeamList.appendChild(listItem);
-        }
-    });
-});
-
 
 
 function startButton() {
