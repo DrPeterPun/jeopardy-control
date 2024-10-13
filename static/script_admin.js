@@ -65,9 +65,11 @@ socket.on('update_click_order', function(data) {
     var clickOrder = document.getElementById('clickOrder');
     clickOrder.innerHTML = ''; // Clear the list
 
+    console.log("idk");
     data.click_order.forEach(function(user) {
         var li = document.createElement('li');
 
+        console.log(contestat);
         // Set the text color to the player's team color
         li.style.color = user.team;
 
@@ -95,6 +97,7 @@ socket.on('update_locked_out', function(data) {
 
     // Iterate over the locked out contestants
     data.locked_out.forEach(function(contestant) {
+        console.log(contestat)
         const listItem = document.createElement('li');
         listItem.textContent = contestant.name;
 

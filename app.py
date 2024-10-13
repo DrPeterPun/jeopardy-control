@@ -21,12 +21,12 @@ def index():
     return "Welcome to Jeopardy Controller"
 
 
-@app.route('/admin')
+@app.route('/jesslinda123')
 def admin():
     return render_template('admin.html')
 
 
-@app.route('/contestant')
+@app.route('/nabos')
 def contestant():
     return render_template('contestant.html')
 
@@ -52,7 +52,7 @@ def handle_join(data):
 
 @socketio.on('button_click')
 def handle_click(data):
-    global button_active, click_order, locked_out
+    global button_active, click_order, locked_out, contestants
     username = data['username']
 
     if not button_active:
@@ -74,13 +74,15 @@ def handle_click(data):
         else:
             emit('click_ack', {'message': 'You clicked the button'}, room=request.sid)
 
-        emit('update_locked_out', {
-            'locked_out': [{'name': a, 'team': b} for (a, b) in contestant if a in locked_out]
-        }, broadcast=True)
+    emit('update_locked_out', {
+        'locked_out': [{'name': a, 'team': b} for (a, b) in contestants if a in locked_out]
+    }, broadcast=True)
+    print([{'name': a, 'team': b} for (a, b) in contestants if a in locked_out])
 
-        emit('update_click_oder', {
-            'click_order': [{'name': a, 'team': b} for (a, b) in contestant if a in click_order]
-        }, broadcast=True)
+    print([{'name': a, 'team': b} for (a, b) in contestants if a in click_order])
+    emit('update_click_oder', {
+        'click_order': [{'name': a, 'team': b} for (a, b) in contestants if a in click_order]
+    }, broadcast=True)
 
 
 # activates button, it is clickable but locks out participants
@@ -129,4 +131,4 @@ def updateButtonState():
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=15123, debug=False)
+    socketio.run(app, host='0.0.0.0', port=15000, debug=False)
