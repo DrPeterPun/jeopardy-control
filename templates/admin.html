@@ -6,9 +6,9 @@
 </head>
 <body>
     <h1>Admin Panel</h1>
-    <button onclick="activateButton()">Activate Button</button>
-    <button onclick="startButton()">Start Button</button>
-    <button onclick="resetButton()">Deactivate Button</button>
+    <button id="activateButton" onclick="activateButton()">Activate Button</button>
+    <button id="startButton" onclick="startButton()">Start Button</button>
+    <button id="deactivateButton" style="background-color: gray; cursor: not-allowed;" disabled onclick="deactivateButton()">Deactivate Button</button>
 
     <h2>LockedOut:</h2>
     <ul id="lockedOut"></ul>
@@ -20,6 +20,6 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-    <script src="/static/script.js"></script>
+    <script src="/static/script_admin.js"></script>
 </body>
 </html>

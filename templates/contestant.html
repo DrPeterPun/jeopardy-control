@@ -9,7 +9,18 @@
     <h1>Contestant Panel</h1>
     <div id="login">
         <input type="text" id="username" placeholder="Enter your name">
-        <input type="text" id="team" placeholder="Enter your team name">
+
+
+
+        <p>Select your team:</p>
+        <input type="radio" id="red" name="team" value="red">
+        <label for="red">Red</label><br>
+
+        <input type="radio" id="blue" name="team" value="blue">
+        <label for="blue">Blue</label><br>
+
+        <input type="radio" id="green" name="team" value="green">
+        <label for="green">Green</label><br>
         <button onclick="joinGame()">Join Game</button>
     </div>
 
@@ -19,6 +30,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-    <script src="/static/script.js"></script>
+    <script src="/static/script_cont.js"></script>
 </body>
 </html>

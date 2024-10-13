@@ -40,6 +40,8 @@ def handle_join(data):
     global contestants
     username = data['username']
     team = data['team']
+    print("join data:")
+    print(data)
     if username not in [a for (a, b) in contestants]:
         print(username, " just joined the room")
         contestants.append((username, team))
@@ -72,36 +74,58 @@ def handle_click(data):
         else:
             emit('click_ack', {'message': 'You clicked the button'}, room=request.sid)
 
-        emit('update_locked_out', {'locked_out': locked_out}, broadcast=True)
-        emit('update_click_order', {'click_order': click_order}, broadcast=True)
+        emit('update_locked_out', {
+            'locked_out': [{'name': a, 'team': b} for (a, b) in contestant if a in locked_out]
+        }, broadcast=True)
+
+        emit('update_click_oder', {
+            'click_order': [{'name': a, 'team': b} for (a, b) in contestant if a in click_order]
+        }, broadcast=True)
 
 
 # activates button, it is clickable but locks out participants
 @socketio.on('activate_button')
 def activate_button():
     global button_active, click_order, locked_out
+    print("activate button")
     button_active = True
     locked_out = []
     click_order = []
-    emit('button_status', {'active': button_active}, broadcast=True)
+    # emit('activate_button', {'active': button_active}, broadcast=True)
+    updateButtonState()
 
 
 # starts button, From this point forwerdas, clicks count
 @socketio.on('start_button')
 def start_button():
     global button_started, click_order
+    print("start button")
     if button_active:
         button_started = True
     click_order = []
-    emit('button_status', {'active': button_active}, broadcast=True)
+    # emit('start_button', {'active': button_active}, broadcast=True)
+    updateButtonState()
 
 
 # deletes all button related state, restarts a round
-@socketio.on('reset_button')
+@socketio.on('deactivate_button')
 def reset_button():
-    global button_active
+    global button_active, button_started
+    print("deactivate button")
     button_active = False
-    emit('button_status', {'active': button_active}, broadcast=True)
+    button_started = False
+    # emit('deactivate_button', {'active': button_active}, broadcast=True)
+    updateButtonState()
+
+
+def updateButtonState():
+    global button_started, button_active
+    if not button_active and not button_started:
+        emit('deactivate_button', {'active': button_active}, broadcast=True)
+    elif button_active and not button_started:
+        emit('activate_button', {'active': button_active}, broadcast=True)
+    elif button_started:
+        emit('start_button', {'active': button_active}, broadcast=True)
 
 
 if __name__ == '__main__':
