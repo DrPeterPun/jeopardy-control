@@ -42,12 +42,9 @@ def handle_join(data):
     team = data['team']
     print("join data:")
     print(data)
-    if username not in [a for (a, b) in contestants]:
-        print(username, " just joined the room")
-        contestants.append((username, team))
-        emit('join_success', {'username': username})
-    else:
-        emit('join_failure', {'message': 'Username already taken'})
+    print(username, " just joined the room")
+    contestants.append((username, team))
+    emit('join_success', {'username': username})
 
 
 @socketio.on('button_click')
